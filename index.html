@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html>	
 	<head>
-		<title>Example 01.01 - Basic skeleton</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title> VR tour </title>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
-		</script>
-		<script
-            src="https://code.jquery.com/jquery-1.12.4.min.js"
-            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
-            crossorigin="anonymous"></script>
-		<style>
-		body{
-		/* set margin to 0 and overflow to hidden, 
-		to use the complete page */
-		margin: 0;
-		overflow: hidden;
-		}
-		</style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <link rel="stylesheet" href="./css/style.css"> 
 	</head>
 	<body>
-		<!--Div which will hold the Output -->
-		<div id="WebGL-output">
-		</div>
-		<!--Javascript code that runs our Three.js examples -->
-		<script type="text/javascript">
-		// once everything is loaded, we run our Three.js stuff.
-		$(function () {
-		// here we'll put the Three.js stuff
-		});
-		</script>
+        <div class="container position-absolute absolute" style="top:10px; right:15px;">
+            <button type="button" class="btn btn-success btn-lg pull-right">Contact Seller</button>
+        </div>
+        <div class="absolute" data-toggle="buttons" style="bottom:40px">
+                <button type="button" class="btn btn-primary-outline btn-lg ">Left</button>
+                <button type="button" class="btn btn-primary-outline btn-lg">Middle</button>
+                <button type="button" class="btn btn-primary-outline btn-lg">Right</button>
+        </div>
+
 	</body>
 </html>
 
@@ -40,18 +32,15 @@
   var raycaster = new THREE.Raycaster();
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
-  var src1 = "https://texturify.com/content/10127/texturify_pano-1-8.jpg";
-  var src2 = "https://i.imgur.com/jevL9av.jpg"
+  let img= ["https://imgur.com/ewPPOIK.jpg", "https://i.imgur.com/B4uLjgn.jpg", "https://i.imgur.com/OA6fI3G.jpg", 
+    "https://i.imgur.com/qYLIyFQ.jpg" , "https://i.imgur.com/YyTJskt.jpg" , "https://i.imgur.com/YvGxlcN.jpg" , 
+    "https://i.imgur.com/IzOFnIC"
+]
   
-  app.UseCors(builder => builder
-    .AllowAnyOrigin()
-    .AllowAnyMethod()
-    .AllowAnyHeader())
-
 
 
   init({
-    texture: src1,
+    texture: img[1],
     stencil: "https://i.imgur.com/NUKbrbl.png",
     objects: {
       "255,0,0": "Розетка 1",
@@ -69,7 +58,7 @@
 
   function init(json) {
       objects = json.objects;
-      camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 1, 1100);
+      camera = new THREE.PerspectiveCamera(80, innerWidth / innerHeight, 1, 1100);
       camera.target = new THREE.Vector3(0, 0, 0);
       scene = new THREE.Scene();
       let geometry = new THREE.SphereBufferGeometry(500, 60, 40);
@@ -202,18 +191,5 @@
       renderer.render(scene, camera);
   }
 </script>
-<style>
-  body{
-      margin: 0;
-      overflow: hidden;
-  }
-  #info {
-      position: absolute;
-      background-color: rgba(0,0,0,0.5);
-      color: white;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      padding: 0 10px 0 10px;
-      opacity: 0;
-  }
-</style>
+
+
