@@ -1,195 +1,217 @@
 <!DOCTYPE html>
 <html>	
-	<head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-		<title> VR tour </title>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <link rel="stylesheet" href="./css/bootstrap.min.css">
-        <link rel="stylesheet" href="./css/style.css"> 
-	</head>
-	<body>
-        <div class="container position-absolute absolute" style="top:10px; right:15px;">
-            <button type="button" class="btn btn-success btn-lg pull-right">Contact Seller</button>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title> VR tour </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/104/three.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="./css/bootstrap-theme.css">
+    <link rel="stylesheet" href="./css/style.css"> 
+</head>
+<body>
+    <div class="container absolute" style="top:10px; right:15px;">
+        <button type="button" class="btn btn-success btn-lg pull-right">Contact Seller</button>
+    </div>
+    <div class="container absolute text-center" data-toggle="buttons" style="bottom:40px">
+        <div class="container">
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="1">Hallway</button>
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="2">Livingroom</button>
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="3">Diningroom</button>
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="4">Bathroom</button>
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="5">Passage</button>
+            <button type="button" class="btn btn-primary-outline btn-lg room" data-item="6">Kitchen balcony</button>
         </div>
-        <div class="absolute" data-toggle="buttons" style="bottom:40px">
-                <button type="button" class="btn btn-primary-outline btn-lg ">Left</button>
-                <button type="button" class="btn btn-primary-outline btn-lg">Middle</button>
-                <button type="button" class="btn btn-primary-outline btn-lg">Right</button>
-        </div>
-
-	</body>
+    </div>
+</body>
 </html>
-
 <script>
-  let camera, scene, renderer, mesh, material, e, objects,
-      imgData, uv, info, lon = 0, lat = 0;
 
-  var mouseDown = {};
-  var mouse = new THREE.Vector2();
-  var raycaster = new THREE.Raycaster();
-  var canvas = document.createElement('canvas');
-  var ctx = canvas.getContext('2d');
-  let img= ["https://imgur.com/ewPPOIK.jpg", "https://i.imgur.com/B4uLjgn.jpg", "https://i.imgur.com/OA6fI3G.jpg", 
-    "https://i.imgur.com/qYLIyFQ.jpg" , "https://i.imgur.com/YyTJskt.jpg" , "https://i.imgur.com/YvGxlcN.jpg" , 
-    "https://i.imgur.com/IzOFnIC"
+let camera, scene, renderer, mesh, material, e, objects, imgData, uv, info, lon = 0, lat = 0;
+
+var mouseDown = {};
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+var canvas = document.createElement('canvas');
+var ctx = canvas.getContext('2d');
+
+let img= ["https://imgur.com/ewPPOIK.jpg", "https://i.imgur.com/B4uLjgn.jpg", "https://i.imgur.com/OA6fI3G.jpg", 
+"https://i.imgur.com/qYLIyFQ.jpg" , "https://i.imgur.com/YyTJskt.jpg" , "https://i.imgur.com/YvGxlcN.jpg" , 
+"https://i.imgur.com/IzOFnIC.jpg"
 ]
-  
+let backImg = ["https://i.imgur.com/NUKbrbl.png"]
+let objectsInn = [ {
+    "255,0,0": "Розетка 1",
+    "245,0,0": "Окно 1",
+    "235,0,0": "Лоток",
+    "225,0,0": "Коробка",
+    "215,0,0": "Ящик стола",
+    "205,0,0": "Розетка 2",
+    "195,0,0": "Камин",
+    "185,0,0": "Окно 2",
+    "175,0,0": "А здесь был лось",
+    "165,0,0": "Стол"
+}]
 
 
-  init({
-    texture: img[1],
-    stencil: "https://i.imgur.com/NUKbrbl.png",
-    objects: {
-      "255,0,0": "Розетка 1",
-      "245,0,0": "Окно 1",
-      "235,0,0": "Лоток",
-      "225,0,0": "Коробка",
-      "215,0,0": "Ящик стола",
-      "205,0,0": "Розетка 2",
-      "195,0,0": "Камин",
-      "185,0,0": "Окно 2",
-      "175,0,0": "А здесь был лось",
-      "165,0,0": "Стол"
+function init(json) {
+    objects = json.objects;
+    camera = new THREE.PerspectiveCamera(80, innerWidth / innerHeight, 1, 1100);
+    camera.target = new THREE.Vector3(0, 0, 0);
+    scene = new THREE.Scene();
+    let geometry = new THREE.SphereBufferGeometry(500, 60, 40);
+    geometry.scale(-1, 1, 1);
+    material = createMaterial(json.texture, json.stencil);
+    scene.add(mesh = new THREE.Mesh(geometry, material));
+    renderer = new THREE.WebGLRenderer();
+    renderer.setPixelRatio(devicePixelRatio);
+    renderer.setSize(innerWidth, innerHeight);
+    document.body.append(renderer.domElement);
+    info = document.createElement('div');
+    info.id = 'info';
+    document.body.append(info);
+    addEventListener('mousedown', onPointerStart);
+    addEventListener('mousemove', onPointerMove);
+    addEventListener('mouseup', onPointerUp);
+    addEventListener('wheel', onDocumentMouseWheel);
+    addEventListener('touchstart', onPointerStart);
+    addEventListener('touchmove', onPointerMove);
+    addEventListener('touchend', onPointerUp);
+    addEventListener('resize', onWindowResize);
+    animate();
+}
+
+function createMaterial(img, stencil) {
+    let textureLoader = new THREE.TextureLoader();
+    let stencilImage = new Image();
+    stencilImage.crossOrigin = "anonymous";
+    stencilImage.src = stencil;
+    stencilImage.onload = function() {
+        canvas.width = stencilImage.width;
+        canvas.height = stencilImage.height;
+        ctx.drawImage(stencilImage,0,0);
+        imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    };
+    return new THREE.ShaderMaterial({
+        uniforms: {
+            mouse: { type: "2f", value: mouse },
+            texture1: { type: "t", value: textureLoader.load( img ) },
+            texture2: { type: "t", value: textureLoader.load( stencil ) }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }`,
+        fragmentShader: `
+            precision highp float;
+            varying vec2 vUv;
+            uniform vec2 mouse;
+            uniform sampler2D texture1;
+            uniform sampler2D texture2;
+            void main() {
+                vec4 stencil = texture2D(texture2, vUv);
+                gl_FragColor = texture2D(texture1, vUv);
+                vec4 c = texture2D(texture2, mouse);
+                if (abs(c.x - stencil.x) < 0.0001 && stencil.x > 0.)
+                    gl_FragColor += vec4(0.,0.2,0,0.);
+            }`
+    })
+}
+
+function onWindowResize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( innerWidth, innerHeight );
+}
+
+function onPointerStart( event ) {
+    mouseDown.x = event.clientX || event.touches[ 0 ].clientX;
+    mouseDown.y = event.clientY || event.touches[ 0 ].clientY;
+    mouseDown.lon = lon;
+    mouseDown.lat = lat;
+}
+
+function raycast(event) {
+    var rect = renderer.domElement.getBoundingClientRect();
+    var x = (event.clientX - rect.left)/rect.width,
+        y = (event.clientY - rect.top)/rect.height;
+    mouse.set(x*2 - 1, 1 - y*2);
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects( scene.children );
+    if (intersects.length > 0 && intersects[0].uv) {
+        material.uniforms.mouse.value = uv = intersects[0].uv;
+        if (!imgData)return;
+        let y = Math.floor((1-uv.y)*canvas.height);
+        let x = Math.floor(uv.x*canvas.width);
+        let off = Math.floor(y*canvas.width + x)*4;
+        let r = imgData.data[off];
+        let g = imgData.data[off+1];
+        let b = imgData.data[off+2];
+        info.innerHTML = objects[`${r},${g},${b}`];
+        info.style.left = event.clientX + 15 + 'px';
+        info.style.top = event.clientY + 'px';
+        info.style.opacity = r+g+b ? 1 : 0;
     }
-  })
+}
 
-  function init(json) {
-      objects = json.objects;
-      camera = new THREE.PerspectiveCamera(80, innerWidth / innerHeight, 1, 1100);
-      camera.target = new THREE.Vector3(0, 0, 0);
-      scene = new THREE.Scene();
-      let geometry = new THREE.SphereBufferGeometry(500, 60, 40);
-      geometry.scale(-1, 1, 1);
-      material = createMaterial(json.texture, json.stencil);
-      scene.add(mesh = new THREE.Mesh(geometry, material));
-      renderer = new THREE.WebGLRenderer();
-      renderer.setPixelRatio(devicePixelRatio);
-      renderer.setSize(innerWidth, innerHeight);
-      document.body.append(renderer.domElement);
-      info = document.createElement('div');
-      info.id = 'info';
-      document.body.append(info);
-      addEventListener('mousedown', onPointerStart);
-      addEventListener('mousemove', onPointerMove);
-      addEventListener('mouseup', onPointerUp);
-      addEventListener('wheel', onDocumentMouseWheel);
-      addEventListener('touchstart', onPointerStart);
-      addEventListener('touchmove', onPointerMove);
-      addEventListener('touchend', onPointerUp);
-      addEventListener('resize', onWindowResize);
-      animate();
-  }
+function onPointerMove( event ) {
+    raycast(e = event);
+    if (!mouseDown.x) return;
+    let clientX = event.clientX || event.touches[0].clientX;
+    let clientY = event.clientY || event.touches[0].clientY;
+    lon = (mouseDown.x - clientX)*camera.fov/600 + mouseDown.lon;
+    lat = (clientY - mouseDown.y)*camera.fov/600 + mouseDown.lat;
+    lat = Math.max( - 85, Math.min( 85, lat ) );
+}
 
-  function createMaterial(img, stencil) {
-      let textureLoader = new THREE.TextureLoader();
-      let stencilImage = new Image();
-      stencilImage.crossOrigin = "anonymous";
-      stencilImage.src = stencil;
-      stencilImage.onload = function() {
-          canvas.width = stencilImage.width;
-          canvas.height = stencilImage.height;
-          ctx.drawImage(stencilImage,0,0);
-          imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      };
-      return new THREE.ShaderMaterial({
-          uniforms: {
-              mouse: { type: "2f", value: mouse },
-              texture1: { type: "t", value: textureLoader.load( img ) },
-              texture2: { type: "t", value: textureLoader.load( stencil ) }
-          },
-          vertexShader: `
-              varying vec2 vUv;
-              void main() {
-                  vUv = uv;
-                  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-              }`,
-          fragmentShader: `
-              precision highp float;
-              varying vec2 vUv;
-              uniform vec2 mouse;
-              uniform sampler2D texture1;
-              uniform sampler2D texture2;
-              void main() {
-                  vec4 stencil = texture2D(texture2, vUv);
-                  gl_FragColor = texture2D(texture1, vUv);
-                  vec4 c = texture2D(texture2, mouse);
-                  if (abs(c.x - stencil.x) < 0.0001 && stencil.x > 0.)
-                      gl_FragColor += vec4(0.,0.2,0,0.);
-              }`
-      })
-  }
+function onPointerUp() {
+    mouseDown.x = null;
+}
 
-  function onWindowResize() {
-      camera.aspect = innerWidth / innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize( innerWidth, innerHeight );
-  }
+function onDocumentMouseWheel( event ) {
+    let fov = camera.fov + event.deltaY * 0.05;
+    camera.fov = THREE.Math.clamp(fov, 10, 75);
+    camera.updateProjectionMatrix();
+}
 
-  function onPointerStart( event ) {
-      mouseDown.x = event.clientX || event.touches[ 0 ].clientX;
-      mouseDown.y = event.clientY || event.touches[ 0 ].clientY;
-      mouseDown.lon = lon;
-      mouseDown.lat = lat;
-  }
+function animate() {
+    requestAnimationFrame(animate);
 
-  function raycast(event) {
-      var rect = renderer.domElement.getBoundingClientRect();
-      var x = (event.clientX - rect.left)/rect.width,
-          y = (event.clientY - rect.top)/rect.height;
-      mouse.set(x*2 - 1, 1 - y*2);
-      raycaster.setFromCamera(mouse, camera);
-      var intersects = raycaster.intersectObjects( scene.children );
-      if (intersects.length > 0 && intersects[0].uv) {
-          material.uniforms.mouse.value = uv = intersects[0].uv;
-          if (!imgData)return;
-          let y = Math.floor((1-uv.y)*canvas.height);
-          let x = Math.floor(uv.x*canvas.width);
-          let off = Math.floor(y*canvas.width + x)*4;
-          let r = imgData.data[off];
-          let g = imgData.data[off+1];
-          let b = imgData.data[off+2];
-          info.innerHTML = objects[`${r},${g},${b}`];
-          info.style.left = event.clientX + 15 + 'px';
-          info.style.top = event.clientY + 'px';
-          info.style.opacity = r+g+b ? 1 : 0;
-      }
-  }
+    let phi = THREE.Math.degToRad( 90 - lat );
+    let theta = THREE.Math.degToRad( lon );
+    camera.target.x = 0.001*Math.sin(phi)*Math.cos(theta);
+    camera.target.y = 0.001*Math.cos(phi);
+    camera.target.z = 0.001*Math.sin(phi)*Math.sin(theta);
+    camera.lookAt(camera.target);
+    e&&raycast(e);
+    renderer.render(scene, camera);
+}
 
-  function onPointerMove( event ) {
-      raycast(e = event);
-      if (!mouseDown.x) return;
-      let clientX = event.clientX || event.touches[0].clientX;
-      let clientY = event.clientY || event.touches[0].clientY;
-      lon = (mouseDown.x - clientX)*camera.fov/600 + mouseDown.lon;
-      lat = (clientY - mouseDown.y)*camera.fov/600 + mouseDown.lat;
-      lat = Math.max( - 85, Math.min( 85, lat ) );
-  }
+init({
+        texture: img [ 2 ],
+        stencil: backImg[0],
+        objects: objectsInn[0]
+    })   
 
-  function onPointerUp() {
-      mouseDown.x = null;
-  }
 
-  function onDocumentMouseWheel( event ) {
-      let fov = camera.fov + event.deltaY * 0.05;
-      camera.fov = THREE.Math.clamp(fov, 10, 75);
-      camera.updateProjectionMatrix();
-  }
 
-  function animate() {
-      requestAnimationFrame(animate);
+$(".room").click( 
+  function ()  {
 
-      let phi = THREE.Math.degToRad( 90 - lat );
-      let theta = THREE.Math.degToRad( lon );
-      camera.target.x = 0.001*Math.sin(phi)*Math.cos(theta);
-      camera.target.y = 0.001*Math.cos(phi);
-      camera.target.z = 0.001*Math.sin(phi)*Math.sin(theta);
-      camera.lookAt(camera.target);
-      e&&raycast(e);
-      renderer.render(scene, camera);
-  }
+    $( "canvas" ).detach();
+    $( "#info" ).detach();
+    init({
+            texture: img [ $(this).attr("data-item") ],
+            stencil: backImg[0],
+            objects: objectsInn[0]
+            })   
+    }
+)
 </script>
 
 
