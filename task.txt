@@ -10,4 +10,15 @@ http://openspace.3dphy.com/?un=sa&ic=IreoVictorySF&md=t&map=t
 3) Сама сферическая сцена с текущим положением и точки для перемещения по ним с анимацией как на образце. (Или стрелочки как на образце)
 4) Прелоадер при загрузке больших изображений перед показом
 
+Ожидание
+https://d3t0gshi6300gx.cloudfront.net/projects/digitour/assets/icons/loading.svg
 
+Облака
+
+https://d3t0gshi6300gx.cloudfront.net/projects/digitour/assets/images/cloudBottomBackgroundDesktop.png
+https://d3t0gshi6300gx.cloudfront.net/projects/digitour/assets/images/cloudBottomFrontDesktop.png
+
+превью small
+https://daecrzzg3cbmx.cloudfront.net/prod/digitour/projects/5d303a74962bdb0052a18316/preview.jpg?version=1
+
+https://daecrzzg3cbmx.cloudfront.net/prod/digitour/projects/5d303a74962bdb0052a18316/map.png
