@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,8 +12,27 @@
     <link rel="stylesheet" href="./css/bootstrap-theme.css">
     <link rel="stylesheet" href="./css/style.css">
 </head>
-
+<script>
+    $(document).on('ready', function () {
+            $('.preload').delay(2000).fadeOut('slow');
+    });
+</script>
 <body>
+    <div class="load">
+        <div>
+            <img src="./images/preview.jpg" class="load_img image load">
+            <div class="">WELCOME TO</div>
+            <div class="text-center">UNIT</div>
+            <button type="button" class="btn btn-success btn-lg start absolute center" id="start">Enter Virtual Tour</button>
+        </div> 
+    </div>
+    <div class="preload">
+        <div>
+            <h1>ffff</h1>
+            <img src="./images/preview_s.jpg" class="preload_img image">
+        </div> 
+    </div>
+
     <div class="row">
         <div class="container-fluid">
             <div>
@@ -55,6 +73,4 @@
         </div>
 </body>
 <script type="text/javascript" src="./js/view.js"></script>
-
-
 </html>

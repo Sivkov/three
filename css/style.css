@@ -58,10 +58,31 @@ body{
     height: 2vh;
     border-radius: 1vh;
     text-align: center;
-    z-index: 999;  
     padding: 0;
 }
 
+.preload,
+.load{
+	position: fixed;
+	left: 0;
+	top: 0;
+	right:0;
+	bottom:0;
+}
+
+.preload_img,
+.load_img{
+	position: absolute;
+	left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+    text-align:center;
+}
+.center{
+    display: block;
+    margin: 0 auto;
+   }
 
 
 

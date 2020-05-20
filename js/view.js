@@ -15,6 +15,16 @@ let img = [
     "https://i.imgur.com/YvGxlcN.jpg",
     "https://i.imgur.com/IzOFnIC.jpg"
 ]
+
+let preload = [
+    "https://imgur.com/ewPPOIK.jpg",
+    "https://i.imgur.com/eFwvsve.jpg",
+    "https://i.imgur.com/nuJgTAV.jpg",
+    "https://i.imgur.com/9qpk8XX.jpg",
+    "https://i.imgur.com/q5F8HpC.jpg",
+    "https://i.imgur.com/6unVQ34.jpg",
+    "https://i.imgur.com/eFwvsve.jpg"
+]
 let backImg = ["https://i.imgur.com/NUKbrbl.png"]
 let objectsInn = [{
     "255,0,0": "Розетка 1",
@@ -37,6 +47,7 @@ function init(json) {
     scene = new THREE.Scene();
     let geometry = new THREE.SphereBufferGeometry(500, 60, 40);
     geometry.scale(-1, 1, 1);
+
     material = createMaterial(json.texture, json.stencil);
     scene.add(mesh = new THREE.Mesh(geometry, material));
     renderer = new THREE.WebGLRenderer();
@@ -167,10 +178,10 @@ function animate() {
 
 $(".room").click(
     function () {
-        $("canvas").detach();
-        $("#info").detach();
         $(".btn-circle").addClass("btn-success").removeClass("btn-info");
         $(`[data-info=${$(this).attr("data-item")}]`).addClass("btn-info").removeClass("btn-success");
+        $("canvas").detach();
+        $("#info").detach();
 
         init({
             texture: img[$(this).attr("data-item")],
@@ -180,14 +191,16 @@ $(".room").click(
     }
 )
 
-
 $(".btn-circle").click(
     function () {
-        $("canvas").detach();
-        $("#info").detach();
         $(".btn-circle").addClass("btn-success").removeClass("btn-info");
         $(event.currentTarget).addClass("btn-info").removeClass("btn-success");
-       
+        $("#map").toggleClass("mapmax mapmin");
+        $('#mapimg').toggleClass("mapimgmax mapimgmin");
+
+        $("canvas").detach();
+        $("#info").detach();
+
         init({
             texture: img[$(this).attr("data-info")],
             stencil: backImg[0],
@@ -196,12 +209,14 @@ $(".btn-circle").click(
     }
 )
 
-const fixDot= function () {
+const fixDot = function () {
     var position = $("#mapimg").offset()
     for (let i = 1; i < 7; i++) {
         $(`[data-info="${i}"]`).offset(function () {
-            return { top: position.top + $("#mapimg").height() * $(this).attr("data-height"), 
-                    left: position.left + $("#mapimg").width() * $(this).attr("data-width") };
+            return {
+                top: position.top + $("#mapimg").height() * $(this).attr("data-height"),
+                left: position.left + $("#mapimg").width() * $(this).attr("data-width")
+            };
         })
     }
 }
@@ -211,34 +226,18 @@ $("#map").click(function () {
     $('#mapimg').toggleClass("mapimgmax mapimgmin")
     var position = $("#mapimg").offset()
     console.log($("#mapimg").width() + " " + $("#mapimg").height() + " " + position.top + " " + position.left)
-
-
-
 });
-/*
-$(window).resize(function () {
-    var position = $("#mapimg").offset()
-    for (let i = 1; i < 7; i++) {
-        $(`[data-info="${i}"]`).offset(function () {
-            return { top: position.top + $("#mapimg").height() * $(this).attr("data-height"), 
-                     left: position.left + $("#mapimg").width() * $(this).attr("data-width") };
-        })
-    }
-})
 
-$(document).ready(function () {
-  
-})
-*/
+$("#start").on('click', function () {
+    $('.load').delay(100).fadeOut('slow');
+});
 
-
-
-
-$(document).on("ready",  fixDot);
+$(document).on("ready", fixDot);
 $(window).on("resize", fixDot);
 $("#map").on("click", fixDot);
+$('[data-item="1"]').click()
 
 
-$('[data-item="2"]').click()
+
 
 
